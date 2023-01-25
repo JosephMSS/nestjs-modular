@@ -17,7 +17,7 @@ export class UsersService {
    * !Exportar el servicio
    */
   /**
-   * *Ademas el modulo debe ser importado en el modulo que lo va a utilizar para poder hacer 
+   * *Ademas el modulo debe ser importado en el modulo que lo va a utilizar para poder hacer
    * *la inyección de dependencias
    * !Importar el modulo
    */
