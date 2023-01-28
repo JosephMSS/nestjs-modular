@@ -1,26 +1,38 @@
-import { Module } from '@nestjs/common';
+import { Module, HttpModule, HttpService } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
+import { DatabaseModule } from './database/database.module';
 /**de esta manera se exportan variables que se deban usar en los otros modulos */
-const API_KEY_DEV = 'DEV qwerqwerqwe';
-const API_KEY_PROD = 'PRODUCTION qwerqwerqwe';
-const API_KEY =
-  process.env.NODE_ENV === 'production' ? API_KEY_PROD : API_KEY_DEV;
-console.log(
-  '🚀 ~ file: app.module.ts:11 ~ process.env.NODE_ENV',
-  process.env.NODE_ENV,
-);
-console.log('🚀 ~ file: app.module.ts:10 ~ API_KEY', API_KEY);
+
+/**
+ * ! En siguientes versiones hay que instalar npm i --save @nestjs/axios
+ * ya que los modulos http fueron transferidos aqui
+ */
 @Module({
-  imports: [UsersModule, ProductsModule],
+  /**
+   * Registro el //!MODULO {HttpModule}
+   * en los imports
+   * En el objeto del provider registro el //!SERVICIO con el aributo Inject
+   * Solo asi puedo pasar parámetros el modulo https
+   */
+  imports: [UsersModule, ProductsModule, HttpModule, DatabaseModule],
   controllers: [AppController],
   providers: [
     AppService,
     {
-      provide: 'API_KEY', //Nombre de la variable
-      useValue: API_KEY,
+      /**
+       * Detiene los procesos hasta que el proceso se resuelva, su uso es para conexiones de bases de datos, no para cualquier solicitudes,
+       *
+       */
+      provide: 'TASK',
+      useFactory: async (http: HttpService) => {
+        const URL = 'https://jsonplaceholder.typicode.com/todos';
+        const task = await http.get(URL).toPromise();
+        return task.data;
+      },
+      inject: [HttpService],
     },
   ],
 })
