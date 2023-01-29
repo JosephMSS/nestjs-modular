@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { DatabaseModule } from './database/database.module';
+import { ConfigModule } from '@nestjs/config';
 /**de esta manera se exportan variables que se deban usar en los otros modulos */
 
 /**
@@ -14,10 +15,19 @@ import { DatabaseModule } from './database/database.module';
   /**
    * Registro el //!MODULO {HttpModule}
    * en los imports
-   * En el objeto del provider registro el //!SERVICIO con el aributo Inject
+   * En el objeto del provider registro el //!SERVICIO con el atributo Inject
    * Solo asi puedo pasar parámetros el modulo https
    */
-  imports: [UsersModule, ProductsModule, HttpModule, DatabaseModule],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+    UsersModule,
+    ProductsModule,
+    HttpModule,
+    DatabaseModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
